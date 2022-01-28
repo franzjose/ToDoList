@@ -4,11 +4,13 @@ import ffufm.patrick.api.PassTestBase
 import ffufm.patrick.api.repositories.user.UserUserRepository
 import ffufm.patrick.api.spec.dbo.user.UserUser
 import ffufm.patrick.api.spec.handler.user.UserUserDatabaseHandler
+import ffufm.patrick.api.spec.handler.utils.EntityGenerator
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
+import kotlin.test.assertEquals
 
 class UserUserDatabaseHandlerTest : PassTestBase() {
     @Autowired
@@ -40,9 +42,17 @@ class UserUserDatabaseHandlerTest : PassTestBase() {
 
     @Test
     fun `test getById`() = runBlocking {
-        val id: Long = 0
-        userUserDatabaseHandler.getById(id)
-        Unit
+        val user = EntityGenerator.user
+        val createdUser = userUserRepository.save(user)
+
+        val retrievedUser = userUserDatabaseHandler.getById(requireNotNull(createdUser.id))
+
+        requireNotNull(retrievedUser)
+
+        assertEquals(createdUser.firstName, retrievedUser.firstName)
+        assertEquals(createdUser.lastName, retrievedUser.lastName)
+        assertEquals(createdUser.email, retrievedUser.email)
+
     }
 
     @Test
