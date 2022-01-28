@@ -9,6 +9,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
+import kotlin.test.assertEquals
 
 class UserUserDatabaseHandlerTest : PassTestBase() {
     @Autowired
@@ -46,10 +47,16 @@ class UserUserDatabaseHandlerTest : PassTestBase() {
     }
 
     @Test
-    fun `test remove`() = runBlocking {
+    fun `remove test should return ok`() = runBlocking {
+        val createdUser = userUserRepository.save(UserUser(
+            firstName = "Kim",
+            lastName = "Ko",
+            email = "Kim@gmail.com"
+        ))
+        assertEquals(1, userUserRepository.findAll().count())
         val id: Long = 0
-        userUserDatabaseHandler.remove(id)
-        Unit
+        userUserDatabaseHandler.remove(createdUser.id!!)
+        assertEquals(0, userUserRepository.findAll().count())
     }
 
     @Test

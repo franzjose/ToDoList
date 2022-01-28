@@ -49,8 +49,7 @@ class UserUserHandlerImpl : PassDatabaseHandler<UserUser, UserUserRepository>(),
      */
     override suspend fun remove(id: Long) {
         val original = repository.findById(id).orElseThrow404(id)
-        TODO("not checked yet - update the values you really want updated")
-//        return repository.delete(original)
+        return repository.delete(original)
     }
 
     /**

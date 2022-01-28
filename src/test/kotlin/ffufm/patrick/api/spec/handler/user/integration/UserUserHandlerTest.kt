@@ -77,16 +77,20 @@ class UserUserHandlerTest : PassTestBase() {
 
     @Test
     @WithMockUser
-    fun `test remove`() {
-        val id: Long = 0
-                mockMvc.delete("/users/{id}/", id) {
-                    accept(MediaType.APPLICATION_JSON)
-                    contentType = MediaType.APPLICATION_JSON
-                    
-                }.andExpect {
-                    status { isOk() }
-                    
-                }
+    fun `remove should return 200`() {
+        val createdUser = userUserRepository.save(UserUser(
+            firstName = "Kim",
+            lastName = "Ko",
+            email = "Kim@gmail.com"
+        ))
+        mockMvc.delete("/users/{id}/", createdUser.id) {
+            accept(MediaType.APPLICATION_JSON)
+            contentType = MediaType.APPLICATION_JSON
+
+        }.asyncDispatch().andExpect {
+            status { isOk() }
+
+        }
     }
 
     @Test
