@@ -11,6 +11,17 @@ class EmailFormatChecker(
         // Converts the response into Map to check the value of the attributes
         val response =  emailValidatorApi.verifyEmail(email).toMap()
         // Return the value of the format value of the response
-        return response["format"] as Boolean
+        val isDisposable: Boolean = try {
+            response["disposable"] as Boolean
+        }catch (e: NullPointerException){
+            false
+        }
+
+        val isValidFormat: Boolean = try {
+            response["format"] as Boolean
+        }catch (e: NullPointerException){
+            false
+        }
+        return isValidFormat.and(!isDisposable)
     }
 }
