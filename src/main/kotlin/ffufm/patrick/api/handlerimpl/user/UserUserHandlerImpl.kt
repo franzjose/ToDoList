@@ -2,6 +2,7 @@ package ffufm.patrick.api.handlerimpl.user
 
 import de.ffuf.pass.common.handlers.PassDatabaseHandler
 import de.ffuf.pass.common.utilities.extensions.orElseThrow404
+import ffufm.patrick.api.checker.EmailFormatChecker
 import ffufm.patrick.api.repositories.user.UserUserRepository
 import ffufm.patrick.api.spec.dbo.user.UserUser
 import ffufm.patrick.api.spec.dbo.user.UserUserDTO
@@ -9,20 +10,32 @@ import ffufm.patrick.api.spec.handler.user.UserUserDatabaseHandler
 import kotlin.Int
 import kotlin.Long
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
-import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import org.springframework.web.server.ResponseStatusException
 
 @Component("user.UserUserHandler")
-class UserUserHandlerImpl : PassDatabaseHandler<UserUser, UserUserRepository>(),
+class UserUserHandlerImpl(
+    val emailFormatChecker: EmailFormatChecker
+) : PassDatabaseHandler<UserUser, UserUserRepository>(),
         UserUserDatabaseHandler {
     /**
      * Create User: Creates a new User object
      * HTTP Code 201: The created User
      */
     override suspend fun create(body: UserUserDTO): UserUserDTO {
-        TODO("not checked yet")
-//        return repository.save(body)
+        val bodyEntity = body.toEntity()
+        // Check if the user first name and last name already exist in the database
+        if(repository.doesUserExist(bodyEntity.firstName, bodyEntity.lastName))
+            throw ResponseStatusException(HttpStatus.CONFLICT, "User already exist")
+        // Check if the email is invalid using an external API
+        if(!emailFormatChecker.isValidEmail(email = bodyEntity.email))
+            throw ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Email: ${bodyEntity.email} is invalid"
+            )
+
+        return repository.save(body.toEntity()).toDto()
     }
 
     /**

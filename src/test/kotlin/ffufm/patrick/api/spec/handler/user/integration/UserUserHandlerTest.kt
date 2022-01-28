@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import ffufm.patrick.api.PassTestBase
 import ffufm.patrick.api.repositories.user.UserUserRepository
 import ffufm.patrick.api.spec.dbo.user.UserUser
+import ffufm.patrick.api.spec.handler.utils.EntityGenerator
 import org.hamcrest.CoreMatchers
 import org.junit.After
 import org.junit.Before
@@ -36,29 +37,49 @@ class UserUserHandlerTest : PassTestBase() {
 
     @Test
     @WithMockUser
-    fun `test create`() {
-        val body: UserUser = UserUser()
-                mockMvc.post("/users/") {
-                    accept(MediaType.APPLICATION_JSON)
-                    contentType = MediaType.APPLICATION_JSON
-                    content = objectMapper.writeValueAsString(body)
-                }.andExpect {
-                    status { isOk() }
-                    
-                }
+    fun `create should return 200 given valid inputs`() {
+        val body = EntityGenerator.user
+        mockMvc.post("/users/") {
+            accept(MediaType.APPLICATION_JSON)
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(body)
+        }.asyncDispatch().andExpect {
+            status { isOk() }
+
+        }
     }
 
     @Test
     @WithMockUser
-    fun `test getAll`() {
-                mockMvc.get("/users/") {
-                    accept(MediaType.APPLICATION_JSON)
-                    contentType = MediaType.APPLICATION_JSON
-                    
-                }.andExpect {
-                    status { isOk() }
-                    
-                }
+    fun `create should return 409 given duplicate`() {
+        val body = EntityGenerator.user
+        userUserRepository.save(body)
+
+        mockMvc.post("/users/") {
+            accept(MediaType.APPLICATION_JSON)
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(body)
+        }.asyncDispatch().andExpect {
+            status { isConflict() }
+
+        }
+    }
+
+    @Test
+    @WithMockUser
+    fun `create should return 400 given invalid email`() {
+        val body = EntityGenerator.user.copy(
+            email = "invalid@com"
+        )
+
+        mockMvc.post("/users/") {
+            accept(MediaType.APPLICATION_JSON)
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(body)
+        }.asyncDispatch().andExpect {
+            status { isBadRequest() }
+
+        }
     }
 
     @Test
