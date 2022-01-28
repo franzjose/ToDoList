@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import ffufm.patrick.api.PassTestBase
 import ffufm.patrick.api.repositories.user.UserUserRepository
 import ffufm.patrick.api.spec.dbo.user.UserUser
+import ffufm.patrick.api.spec.handler.utils.EntityGenerator
 import org.hamcrest.CoreMatchers
 import org.junit.After
 import org.junit.Before
@@ -64,8 +65,10 @@ class UserUserHandlerTest : PassTestBase() {
     @Test
     @WithMockUser
     fun `test getById`() {
-        val id: Long = 0
-                mockMvc.get("/users/{id}/", id) {
+        val user = EntityGenerator.user
+        val createdUser = userUserRepository.save(user)
+
+                mockMvc.get("/users/{id}/", createdUser.id) {
                     accept(MediaType.APPLICATION_JSON)
                     contentType = MediaType.APPLICATION_JSON
                     

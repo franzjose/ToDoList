@@ -40,8 +40,8 @@ class UserUserHandlerImpl : PassDatabaseHandler<UserUser, UserUserRepository>(),
      * HTTP Code 404: A object with the submitted ID does not exist!
      */
     override suspend fun getById(id: Long): UserUserDTO? {
-        TODO("not checked yet")
-//        return repository.findById(id).orElseThrow404(id)
+
+        return repository.findById(id).orElseThrow404(id).toDto()
     }
 
     /**
