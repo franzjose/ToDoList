@@ -78,7 +78,7 @@ class UserUserHandlerTest : PassTestBase() {
         val body = UserUser(
             firstName = "John",
             lastName = "Doe",
-            email = "invalid"
+            email = "invalid@example.com"
         )
 
         mockMvc.post("/users/") {

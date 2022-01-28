@@ -62,7 +62,7 @@ class UserUserDatabaseHandlerTest : PassTestBase() {
         val body = UserUser(
             firstName = "John",
             lastName = "Doe",
-            email = "invalidEmailFormat"
+            email = "invalid@com"
         )
 
         val exception = assertFailsWith<ResponseStatusException> {
