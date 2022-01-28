@@ -50,15 +50,19 @@ class UserUserHandlerTest : PassTestBase() {
 
     @Test
     @WithMockUser
-    fun `test getAll`() {
-                mockMvc.get("/users/") {
-                    accept(MediaType.APPLICATION_JSON)
-                    contentType = MediaType.APPLICATION_JSON
-                    
-                }.andExpect {
-                    status { isOk() }
-                    
-                }
+    ffun `getAll should return 200`() {
+        val body: UserUser = UserUser(
+            firstName = "John",
+            lastName = "Doe",
+            email = "john.doe@yahoo.com"
+        )
+        mockMvc.get("/users/") {
+            accept(MediaType.APPLICATION_JSON)
+            contentType = MediaType.APPLICATION_JSON
+        }.asyncDispatch().andExpect {
+            status { isOk ()}
+
+        }
     }
 
     @Test
@@ -77,17 +81,22 @@ class UserUserHandlerTest : PassTestBase() {
 
     @Test
     @WithMockUser
-    fun `test remove`() {
-        val id: Long = 0
-                mockMvc.delete("/users/{id}/", id) {
-                    accept(MediaType.APPLICATION_JSON)
-                    contentType = MediaType.APPLICATION_JSON
-                    
-                }.andExpect {
-                    status { isOk() }
-                    
-                }
-    }
+    fun `test remove`() = runBlocking {
+            val body: UserUser = UserUser(
+                firstName = "John",
+                lastName = "Doe",
+                email = "john.doe@yahoo.com"
+            )
+            val user = userUserRepository.save(body)
+            mockMvc.delete("/users/{id}/", user.id!!) {
+                accept(MediaType.APPLICATION_JSON)
+                contentType = MediaType.APPLICATION_JSON
+
+            }.asyncDispatch().andExpect {
+                status { isOk() }
+
+            }
+        }
 
     @Test
     @WithMockUser

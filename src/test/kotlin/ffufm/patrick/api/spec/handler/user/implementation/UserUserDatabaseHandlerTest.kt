@@ -32,10 +32,17 @@ class UserUserDatabaseHandlerTest : PassTestBase() {
 
     @Test
     fun `test getAll`() = runBlocking {
-        val maxResults: Int = 100
-        val page: Int = 0
-        userUserDatabaseHandler.getAll(maxResults, page)
-        Unit
+        val body: UserUser = UserUser(
+            firstName = "John",
+            lastName = "Doe",
+            email = "john.doe@yahoo.com"
+        )
+        userUserRepository.saveAll(
+            listOf(body, body.copy(email = "john.doe@yahoo.com"))
+        )
+        val user = userUserDatabaseHandler.getAll(0, 100)
+        assertEquals(2, user.count())
+
     }
 
     @Test
@@ -47,9 +54,16 @@ class UserUserDatabaseHandlerTest : PassTestBase() {
 
     @Test
     fun `test remove`() = runBlocking {
-        val id: Long = 0
-        userUserDatabaseHandler.remove(id)
-        Unit
+        val user: UserUser = UserUser(
+            firstName = "John",
+            lastName = "Doe",
+            email = "john.doe@yahoo.com"
+        )
+        val createdUser = userUserRepository.save(user)
+
+        assertEquals(1, userUserRepository.findAll().count())
+        userUserDatabaseHandler.remove(createdUser.id!!)
+        assertEquals(0, userUserRepository.findAll().count())
     }
 
     @Test

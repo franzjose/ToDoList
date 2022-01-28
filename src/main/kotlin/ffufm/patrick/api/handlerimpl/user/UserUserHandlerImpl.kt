@@ -30,8 +30,8 @@ class UserUserHandlerImpl : PassDatabaseHandler<UserUser, UserUserRepository>(),
      * HTTP Code 200: List of Users
      */
     override suspend fun getAll(maxResults: Int, page: Int): Page<UserUserDTO> {
-        TODO("not checked yet")
-//        return repository.findAll(Pageable.unpaged())
+        val pagination = PageRequest.of(page, maxResults)
+        return repository.findAll(pagination).toDtos()
     }
 
     /**
@@ -49,8 +49,7 @@ class UserUserHandlerImpl : PassDatabaseHandler<UserUser, UserUserRepository>(),
      */
     override suspend fun remove(id: Long) {
         val original = repository.findById(id).orElseThrow404(id)
-        TODO("not checked yet - update the values you really want updated")
-//        return repository.delete(original)
+        return repository.delete(original)
     }
 
     /**
