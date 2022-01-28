@@ -28,7 +28,7 @@ class UserUserDatabaseHandlerTest : PassTestBase() {
 
     @Test
     fun `create should work given valid inputs`() = runBlocking {
-        val body: UserUser = UserUser(
+        val body = UserUser(
             firstName = "John",
             lastName = "Doe",
             email = "john.doe@yahoo.com"
@@ -40,7 +40,7 @@ class UserUserDatabaseHandlerTest : PassTestBase() {
 
     @Test
     fun `create should throw an error given duplicate user`() = runBlocking {
-        val body: UserUser = UserUser(
+        val body = UserUser(
             firstName = "John",
             lastName = "Doe",
             email = "john.doe@yahoo.com"
@@ -59,7 +59,7 @@ class UserUserDatabaseHandlerTest : PassTestBase() {
 
     @Test
     fun `create should throw an error given invalid email format`() = runBlocking {
-        val body: UserUser = UserUser(
+        val body = UserUser(
             firstName = "John",
             lastName = "Doe",
             email = "invalidEmailFormat"
