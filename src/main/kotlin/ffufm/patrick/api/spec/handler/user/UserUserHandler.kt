@@ -2,7 +2,7 @@ package ffufm.patrick.api.spec.handler.user
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import de.ffuf.pass.common.handlers.PassMvcHandler
-import ffufm.patrick.api.spec.dbo.user.UserUser
+import ffufm.patrick.api.spec.dbo.user.UserUserDTO
 import kotlin.Int
 import kotlin.Long
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,20 +24,20 @@ interface UserUserDatabaseHandler {
      * Create User: Creates a new User object
      * HTTP Code 201: The created User
      */
-    suspend fun create(body: UserUser): UserUser
+    suspend fun create(body: UserUserDTO): UserUserDTO
 
     /**
      * Get all Users: Returns all Users from the system that the user has access to.
      * HTTP Code 200: List of Users
      */
-    suspend fun getAll(maxResults: Int = 100, page: Int = 0): Page<UserUser>
+    suspend fun getAll(maxResults: Int = 100, page: Int = 0): Page<UserUserDTO>
 
     /**
      * Finds Users by ID: Returns Users based on ID
      * HTTP Code 200: The User object
      * HTTP Code 404: A object with the submitted ID does not exist!
      */
-    suspend fun getById(id: Long): UserUser?
+    suspend fun getById(id: Long): UserUserDTO?
 
     /**
      * Delete User by id.: Deletes one specific User.
@@ -50,7 +50,7 @@ interface UserUserDatabaseHandler {
      * HTTP Code 404: The requested object could not be found by the submitted id.
      * HTTP Code 422: On or many fields contains a invalid value.
      */
-    suspend fun update(body: UserUser, id: Long): UserUser
+    suspend fun update(body: UserUserDTO, id: Long): UserUserDTO
 }
 
 @Controller("user.User")
@@ -63,7 +63,7 @@ class UserUserHandler : PassMvcHandler() {
      * HTTP Code 201: The created User
      */
     @RequestMapping(value = ["/users/"], method = [RequestMethod.POST])
-    suspend fun create(@RequestBody body: UserUser): ResponseEntity<*> {
+    suspend fun create(@RequestBody body: UserUserDTO): ResponseEntity<*> {
         body.validateOrThrow()
         return success { databaseHandler.create(body) }
     }
@@ -107,7 +107,7 @@ class UserUserHandler : PassMvcHandler() {
      * HTTP Code 422: On or many fields contains a invalid value.
      */
     @RequestMapping(value = ["/users/{id:\\d+}/"], method = [RequestMethod.PUT])
-    suspend fun update(@RequestBody body: UserUser, @PathVariable("id") id: Long):
+    suspend fun update(@RequestBody body: UserUserDTO, @PathVariable("id") id: Long):
             ResponseEntity<*> {
         body.validateOrThrow()
         return success { databaseHandler.update(body, id) }

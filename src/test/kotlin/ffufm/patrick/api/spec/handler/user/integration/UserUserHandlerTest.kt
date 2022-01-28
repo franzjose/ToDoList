@@ -2,8 +2,11 @@ package ffufm.patrick.api.spec.handler.user.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import ffufm.patrick.api.PassTestBase
+import ffufm.patrick.api.repositories.user.UserUserRepository
 import ffufm.patrick.api.spec.dbo.user.UserUser
 import org.hamcrest.CoreMatchers
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
@@ -17,10 +20,19 @@ import org.springframework.test.web.servlet.put
 
 class UserUserHandlerTest : PassTestBase() {
     @Autowired
+    private lateinit var userUserRepository: UserUserRepository
+
+    @Autowired
     private lateinit var objectMapper: ObjectMapper
 
     @Autowired
     private lateinit var mockMvc: MockMvc
+
+    @Before
+    @After
+    fun cleanRepositories() {
+        userUserRepository.deleteAll()
+    }
 
     @Test
     @WithMockUser
