@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import ffufm.patrick.api.PassTestBase
 import ffufm.patrick.api.repositories.user.UserUserRepository
 import ffufm.patrick.api.spec.dbo.user.UserUser
+import ffufm.patrick.api.spec.handler.utils.EntityGenerator
 import org.hamcrest.CoreMatchers
 import org.junit.After
 import org.junit.Before
@@ -37,11 +38,7 @@ class UserUserHandlerTest : PassTestBase() {
     @Test
     @WithMockUser
     fun `create should return 200 given valid inputs`() {
-        val body = UserUser(
-            firstName = "John",
-            lastName = "Doe",
-            email = "john.doe@yahoo.com"
-        )
+        val body = EntityGenerator.user
         mockMvc.post("/users/") {
             accept(MediaType.APPLICATION_JSON)
             contentType = MediaType.APPLICATION_JSON
@@ -55,11 +52,7 @@ class UserUserHandlerTest : PassTestBase() {
     @Test
     @WithMockUser
     fun `create should return 409 given duplicate`() {
-        val body = UserUser(
-            firstName = "John",
-            lastName = "Doe",
-            email = "john.doe@yahoo.com"
-        )
+        val body = EntityGenerator.user
         userUserRepository.save(body)
 
         mockMvc.post("/users/") {
@@ -75,10 +68,8 @@ class UserUserHandlerTest : PassTestBase() {
     @Test
     @WithMockUser
     fun `create should return 400 given invalid email`() {
-        val body = UserUser(
-            firstName = "John",
-            lastName = "Doe",
-            email = "invalid@example.com"
+        val body = EntityGenerator.user.copy(
+            email = "invalid@com"
         )
 
         mockMvc.post("/users/") {

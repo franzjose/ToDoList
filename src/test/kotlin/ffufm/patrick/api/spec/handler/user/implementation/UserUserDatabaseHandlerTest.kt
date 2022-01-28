@@ -4,6 +4,7 @@ import ffufm.patrick.api.PassTestBase
 import ffufm.patrick.api.repositories.user.UserUserRepository
 import ffufm.patrick.api.spec.dbo.user.UserUser
 import ffufm.patrick.api.spec.handler.user.UserUserDatabaseHandler
+import ffufm.patrick.api.spec.handler.utils.EntityGenerator
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -28,11 +29,7 @@ class UserUserDatabaseHandlerTest : PassTestBase() {
 
     @Test
     fun `create should work given valid inputs`() = runBlocking {
-        val body = UserUser(
-            firstName = "John",
-            lastName = "Doe",
-            email = "john.doe@yahoo.com"
-        )
+        val body = EntityGenerator.user
         userUserDatabaseHandler.create(body.toDto())
 
         assertEquals(1, userUserRepository.findAll().count())
@@ -40,11 +37,7 @@ class UserUserDatabaseHandlerTest : PassTestBase() {
 
     @Test
     fun `create should throw an error given duplicate user`() = runBlocking {
-        val body = UserUser(
-            firstName = "John",
-            lastName = "Doe",
-            email = "john.doe@yahoo.com"
-        )
+        val body = EntityGenerator.user
         userUserRepository.save(body)
 
         val exception = assertFailsWith<ResponseStatusException> {
@@ -59,12 +52,9 @@ class UserUserDatabaseHandlerTest : PassTestBase() {
 
     @Test
     fun `create should throw an error given invalid email format`() = runBlocking {
-        val body = UserUser(
-            firstName = "John",
-            lastName = "Doe",
+        val body = EntityGenerator.user.copy(
             email = "invalid@com"
         )
-
         val exception = assertFailsWith<ResponseStatusException> {
             userUserDatabaseHandler.create(body.toDto())
         }
